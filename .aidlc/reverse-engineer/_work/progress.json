@@ -1,0 +1,871 @@
+{
+  "scope": "full project",
+  "mode": "iterative",
+  "started": "2026-07-25T01:12:08Z",
+  "phase1_complete": true,
+  "phase2_batches": [
+    {
+      "batch": "2a-foundation",
+      "status": "done",
+      "modules": [
+        {
+          "name": "buzz-core",
+          "path": "crates/buzz-core",
+          "files": 20,
+          "loc": 7548,
+          "status": "done",
+          "completed": "2026-07-25T02:03:09Z",
+          "files_read": 21,
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-sdk",
+          "path": "crates/buzz-sdk",
+          "files": 5,
+          "loc": 5380,
+          "status": "done",
+          "completed": "2026-07-25T02:03:09Z",
+          "files_read": 6,
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-persona",
+          "path": "crates/buzz-persona",
+          "files": 9,
+          "loc": 5197,
+          "status": "done",
+          "completed": "2026-07-25T02:03:09Z",
+          "files_read": 11,
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-ws-client",
+          "path": "crates/buzz-ws-client",
+          "files": 4,
+          "loc": 541,
+          "status": "done",
+          "completed": "2026-07-25T02:03:09Z",
+          "files_read": 5,
+          "aspects_written": 9
+        }
+      ],
+      "completed": "2026-07-25T02:03:09Z"
+    },
+    {
+      "batch": "2b-services",
+      "status": "done",
+      "completed": "2026-07-25T03:41:00Z",
+      "modules": [
+        {
+          "name": "buzz-db",
+          "path": "crates/buzz-db",
+          "files": 22,
+          "loc": 25580,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-auth",
+          "path": "crates/buzz-auth",
+          "files": 8,
+          "loc": 1877,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-pubsub",
+          "path": "crates/buzz-pubsub",
+          "files": 10,
+          "loc": 2118,
+          "status": "done",
+          "aspects_written": 9,
+          "note": "analyzed inline after two sub-agent aborts; all 11 files read"
+        },
+        {
+          "name": "buzz-search",
+          "path": "crates/buzz-search",
+          "files": 4,
+          "loc": 1863,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-audit",
+          "path": "crates/buzz-audit",
+          "files": 6,
+          "loc": 1114,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-media",
+          "path": "crates/buzz-media",
+          "files": 12,
+          "loc": 6027,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-workflow",
+          "path": "crates/buzz-workflow",
+          "files": 5,
+          "loc": 4411,
+          "status": "done",
+          "aspects_written": 9
+        }
+      ],
+      "key_findings": [
+        "ARCHITECTURE.md sec9 #2 (:823), :390, :460 are STALE: RedisRateLimiter is real, ungated, enforced before work on WS EVENT/REQ/COUNT and HTTP /events,/query,/count; fails closed on Redis error",
+        "3 of 7 BUZZ_RATE_LIMIT_* vars parsed and never read (config.rs:303-314)",
+        "check_ip_connection / LimitType::IpConnections has no production caller; pre-auth WS traffic unmetered",
+        "buzz-auth: NIP-42 grants Scope::all_known() = 16 scopes (docs say 14); all_non_admin() never called",
+        "buzz-auth: ChannelAccessChecker has ZERO implementors repo-wide; trait doc claiming buzz-db implements it is false",
+        "buzz-audit: ARCHITECTURE.md wrong on 5 points (11 actions not 10; hash pre-image has no event_id/kind/channel_id; AuthEventForbidden does not exist; GENESIS_HASH is 32 zero bytes; advisory lock per-community)",
+        "buzz-audit: chain unsigned/unanchored; verify_chain and get_entries have no production caller",
+        "buzz-workflow: 5 triggers not 4 (diff_posted undocumented); add_reaction non-functional (route never registered); approval gates unreachable (nothing writes WaitingApproval); MAX_DELAY_SECS=270 not 300",
+        "buzz-db: 37 tables, 63 indexes, 409 public items, lib.rs 6106 lines, 121/122 async tests ignored; schema.sql missing 12 objects; migration 0008 makes fresh vs brownfield installs diverge permanently",
+        "buzz-media: 50MB limit is images-only relay default; real caps video 500MB / file 100MB; metadata rejected not stripped; GET auth off by default; unchecked offset += atom_size at validation.rs:481",
+        "buzz-search: zero authz by design, community_id always first predicate; ARCHITECTURE.md excluded-kind list stale",
+        "buzz-pubsub: typing indicators advertised in Cargo.toml:8, lib.rs:43, AGENTS.md, ARCHITECTURE.md:452-456 but IMPLEMENTED NOWHERE (zero ZADD, zero buzz:typing keys repo-wide)",
+        "buzz-pubsub: rate_limiter.rs has zero tests; retain_topic can block forever / silently lose subscription (lib.rs:203-207); control messages unversioned+unauthenticated"
+      ]
+    },
+    {
+      "batch": "2c-relay",
+      "status": "done",
+      "completed": "2026-07-24T00:00:00Z",
+      "note": "buzz-relay (76 files / 60056 LOC) subdivided into 7 groups; analyzed as 9 module groups total. All 81 per-module aspect files merged into the 9 aspect docs (11 -> 20 '## Module:' sections each).",
+      "modules": [
+        {
+          "name": "relay-core",
+          "label": "buzz-relay \u2014 core & bootstrap",
+          "path": "crates/buzz-relay/src",
+          "loc": 7747,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "relay-ws",
+          "label": "buzz-relay \u2014 WebSocket protocol & subscriptions",
+          "path": "crates/buzz-relay/src",
+          "loc": 7590,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "relay-ingest",
+          "label": "buzz-relay \u2014 event ingest & side effects",
+          "path": "crates/buzz-relay/src/handlers",
+          "loc": 8911,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "relay-api",
+          "label": "buzz-relay \u2014 HTTP API surface",
+          "path": "crates/buzz-relay/src/api",
+          "loc": 9626,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "relay-git",
+          "label": "buzz-relay \u2014 git hosting",
+          "path": "crates/buzz-relay/src/api/git",
+          "loc": 8935,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "relay-handlers",
+          "label": "buzz-relay \u2014 moderation, admin & background workers",
+          "path": "crates/buzz-relay/src",
+          "loc": 6720,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "relay-audio",
+          "label": "buzz-relay \u2014 huddle audio, tunnel & conformance seam",
+          "path": "crates/buzz-relay/src",
+          "loc": 9266,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-relay-mesh",
+          "path": "crates/buzz-relay-mesh",
+          "files": 9,
+          "loc": 3139,
+          "status": "done",
+          "aspects_written": 9
+        },
+        {
+          "name": "buzz-conformance",
+          "path": "crates/buzz-conformance",
+          "files": 5,
+          "loc": 1749,
+          "status": "done",
+          "aspects_written": 9,
+          "note": "scope includes crates/buzz-relay/src/conformance/{mod.rs,tracers.rs} and docs/spec/MultiTenantRelay.tla"
+        }
+      ],
+      "key_findings": [
+        "AUTH: BUZZ_REQUIRE_AUTH_TOKEN defaults false (config.rs:475-477) => unsigned 'X-Pubkey: <hex>' header impersonates any pubkey on POST /events|/query|/count and all 3 /moderation/* reads (bridge.rs:118-127, :2033), including private_reason (bridge.rs:2165); replay guard skipped via zero-id sentinel (:122-125 -> :150-153); var absent from .env.example",
+        "AUTH: admin API has no credential - Host equality + optional Origin only (admin/auth.rs:16-33); 3 of 4 DB calls take no CommunityId (admin/mod.rs:132,155,184)",
+        "AUTHZ: WS p-gate skipped for channel-scoped REQ (req.rs:182) while historical delivery runs unconditionally (req.rs:261-406); kind 1059 absent from is_global_only_kind (ingest.rs:379-436) and from reader_authorized_for_event (buzz-core/src/filter.rs:25-27); HTTP is stricter (bridge.rs:981)",
+        "AUTHZ: DM-visibility owner fence (30622/44200) exists only in dispatch_persistent_event_inner (event.rs:436-472), absent from fan_out_pubsub_event (event.rs:284) - cross-node path unfenced",
+        "AUTHZ: per-kind scope gate is inert - both transports pass Scope::all_known() (buzz-auth/src/lib.rs:137, bridge.rs:827) so ingest.rs:1525 can never fire; the 81-kind scope map is documentation only; all channel-scoped-token logic is dead (channel_ids hard-coded None, buzz-auth/src/lib.rs:138)",
+        "CORRECTNESS: side-effect failure reported as success (ingest.rs:2434-2441 warn-only, :2489 dispatches anyway); no metric",
+        "AUDIT: hash-chain covers 2 of 11 actions; 12 of 14 privileged kinds unaudited; kinds 9030-9033 and operator provisioning have NO durable trail (tracing::info! only); relay_admin.rs performs ZERO ban re-check",
+        "GIT: no read authorization at all (transport.rs:539-594, :786-827); pointer creation ungated (zero-ref-command push creates pointers, bypassing git_repo_names + quota); hydrate::run_git has no timeout (hydrate.rs:451-470) and runs index-pack without --strict",
+        "MESH: GET /_mesh unauthenticated on hard-coded 0.0.0.0 health listener (main.rs:1116/1119), leaks endpoint_addrs (status.rs:20); gossip records unauthenticated (membership.rs:120-153); no peer eviction; MeshRuntime::shutdown() never called; iroh manifest says 1.0.0-rc.0 but Cargo.lock:3902-3905 resolves 1.0.2",
+        "MESH: buzz-relay-mesh absent from ARCHITECTURE.md/AGENTS.md and from just test-unit - all 32 tests compile but never run",
+        "MESH: the 5 crates/buzz-relay/examples/mesh_*.rs do NOT exercise buzz-relay-mesh - they are MeshLLM (mesh_llm_sdk) smoke tests via git dev-deps (crates/buzz-relay/Cargo.toml:84-85)",
+        "CONFORMANCE: the gate is unassembled end-to-end - check_trace (checker.rs:74) has zero production callers and JsonlTracer (conformance/tracers.rs:30-72) is never instantiated; production binds NoopTracer (state.rs:798), the sole assignment",
+        "CONFORMANCE: an extra Postgres round-trip (db.communities_of_channels) is paid per REQ filter and per search page under NoopTracer - gate is trace_state.is_some() (req.rs:334, :649) and trace_state depends only on pubkey parsing (:116-118); Tracer trait has no is_recording() (lib.rs:314-318)",
+        "CONFORMANCE: 7 Ok-returning ingest paths emit no trace step (ingest.rs:1534-1536 commands, :1561-1570 kind 1984, :1579-1588 moderation, :1808-1816 relay-admin, :1820-1902 kind 28936, :2315-2321 reaction duplicate, :2426-2432 stored duplicate); WriteDuplicate is unreachable on the main write path (:2426-2432 early return makes :2475-2479 dead)",
+        "CONFORMANCE: spec coverage is 8 of 23 Next actions and ~1.5 of 13 Safety invariants; all three write arms return Ok(()) unconditionally (transitions.rs:187,:191,:198) so Inv_ResolutionFence (tla:1011) and Inv_HostBindingFence (tla:1038) contribute nothing; ReadHostFeedRows has no emitter",
+        "CONFORMANCE: h-tag carries a CHANNEL uuid but claimed_community_from_event (conformance/mod.rs:101-119) parses it as a community - arming a recording tracer today would fire IllegalTransition on nearly every authorized channel write",
+        "CONFORMANCE: zero repo-level documentation - buzz-conformance/conformance/MultiTenantRelay.tla/TLA/formal appear nowhere in AGENTS.md, ARCHITECTURE.md, CONTRIBUTING.md",
+        "DEAD CODE: api/events.rs 100% dead; webhook_secret::strip_secret zero callers; workflow_sink implements 1 of 7 workflow actions",
+        "API: POST /api/invites/accept-policy unauthenticated HMAC oracle; /_mesh/demo/echo takes community_id from the request body; 14 routed endpoints fall outside AGENTS.md's 'narrow HTTP surface'",
+        "DOC DRIFT: ARCHITECTURE.md :823/:390/:459 rate-limiting claims false; :824 /api/presence does not exist; :623 '50 MB' is actually 500 MB (router.rs:33-36)"
+      ],
+      "corrections_to_earlier_context": [
+        "buzz-admin does NOT depend on buzz-conformance - only the workspace root (Cargo.toml:125) and crates/buzz-relay/Cargo.toml:20 declare it",
+        "Inv_RowZero belongs to the relay host-binding seam (tenant.rs:76,:291,:312), not buzz-conformance; Inv_NoFork/Inv_Closed/Inv_RefEffectApplied/Inv_RefDerivedFromParent belong to docs/spec/GitOnObjectStore.tla:211-253 consumed by api/git/cas_publish.rs; the crate references only Inv_NonInterference, Inv_ReadConfinement, Inv_SanitizedErrors, Inv_AdmissionFence",
+        "Inv_LabelPropagation exists in the spec (tla:990) but has no Rust predicate",
+        "EmitGuard arms at ingest.rs:1382-1386 (state built :1381); terminal errors map at :1410-1418 (not :1409-1417)",
+        "silent ingest success paths number SEVEN, not six - the stored-event duplicate at ingest.rs:2426-2432 was missed"
+      ]
+    },
+    {
+      "batch": "2d-agent-surface",
+      "status": "done",
+      "note": "buzz-acp (33155 LOC, 5 files >2700 lines) subdivided into 5 groups; buzz-agent into 3; buzz-cli into 3; buzz-dev-mcp as 1. 12 groups x 9 aspects = 108 per-module files, all verified against the format invariant (exactly one '## Module:' and one '### Aspect:' per file, byte-identical module line within each group) before merge.",
+      "modules": [
+        {
+          "name": "acp-core",
+          "label": "buzz-acp \u2014 harness core & orchestration",
+          "path": "crates/buzz-acp/src",
+          "files": "lib.rs, main.rs, Cargo.toml, README.md",
+          "loc": 6926,
+          "status": "pending"
+        },
+        {
+          "name": "acp-relay",
+          "label": "buzz-acp \u2014 relay client & observer",
+          "path": "crates/buzz-acp/src",
+          "files": "relay.rs, observer.rs, engram_fetch.rs",
+          "loc": 6647,
+          "status": "pending"
+        },
+        {
+          "name": "acp-pool",
+          "label": "buzz-acp \u2014 agent pool & lifecycle",
+          "path": "crates/buzz-acp/src",
+          "files": "pool.rs, pool_lifecycle.rs, tests/pool_lifecycle_state.rs",
+          "loc": 5936,
+          "status": "pending"
+        },
+        {
+          "name": "acp-queue",
+          "label": "buzz-acp \u2014 work queue, filtering & usage accounting",
+          "path": "crates/buzz-acp/src",
+          "files": "queue.rs, filter.rs, usage.rs",
+          "loc": 6438,
+          "status": "pending"
+        },
+        {
+          "name": "acp-protocol",
+          "label": "buzz-acp \u2014 ACP protocol, config & setup mode",
+          "path": "crates/buzz-acp/src",
+          "files": "acp.rs, config.rs, setup_mode.rs, base_prompt.md",
+          "loc": 7697,
+          "status": "pending"
+        },
+        {
+          "name": "agent-core",
+          "label": "buzz-agent \u2014 agent loop & wire protocol",
+          "path": "crates/buzz-agent",
+          "files": "lib.rs, agent.rs, types.rs, wire.rs, main.rs, Cargo.toml, README.md, tests/golden_transcripts.rs, tests/regressions.rs",
+          "loc": 5631,
+          "status": "pending"
+        },
+        {
+          "name": "agent-llm",
+          "label": "buzz-agent \u2014 LLM providers, auth & config",
+          "path": "crates/buzz-agent",
+          "files": "llm.rs, auth.rs, config.rs, tests/fake_llm.rs, tests/databricks_oauth.rs, tests/openai_auto_upgrade.rs",
+          "loc": 8734,
+          "status": "pending"
+        },
+        {
+          "name": "agent-tools",
+          "label": "buzz-agent \u2014 MCP tools, catalog, handoff & hints",
+          "path": "crates/buzz-agent",
+          "files": "mcp.rs, catalog.rs, builtin.rs, handoff.rs, hints.rs, tests/bin/fake_mcp.rs, tests/hints_integration.rs",
+          "loc": 4147,
+          "status": "pending"
+        },
+        {
+          "name": "buzz-dev-mcp",
+          "path": "crates/buzz-dev-mcp",
+          "files": 12,
+          "loc": 5258,
+          "status": "pending"
+        },
+        {
+          "name": "cli-core",
+          "label": "buzz-cli \u2014 CLI core, relay client & validation",
+          "path": "crates/buzz-cli",
+          "files": "lib.rs, client.rs, error.rs, validate.rs, agent_management.rs, main.rs, commands/mod.rs, Cargo.toml, README.md, TESTING.md",
+          "loc": 6436,
+          "status": "pending"
+        },
+        {
+          "name": "cli-commands-messaging",
+          "label": "buzz-cli \u2014 messaging & community subcommands",
+          "path": "crates/buzz-cli/src/commands",
+          "files": "channels.rs, messages.rs, dms.rs, reactions.rs, feed.rs, social.rs, users.rs, emoji.rs, channel_templates.rs, moderation.rs, upload.rs",
+          "loc": 4662,
+          "status": "pending"
+        },
+        {
+          "name": "cli-commands-dev",
+          "label": "buzz-cli \u2014 dev, memory & repo subcommands",
+          "path": "crates/buzz-cli/src/commands",
+          "files": "notes.rs, mem.rs, agents.rs, repos.rs, pr.rs, patches.rs, issues.rs, workflows.rs, pack.rs",
+          "loc": 4994,
+          "status": "pending"
+        }
+      ],
+      "completed": "2026-07-24T00:00:00Z",
+      "module_groups": [
+        "acp-core",
+        "acp-relay",
+        "acp-pool",
+        "acp-queue",
+        "acp-protocol",
+        "agent-core",
+        "agent-llm",
+        "agent-tools",
+        "buzz-dev-mcp",
+        "cli-core",
+        "cli-commands-messaging",
+        "cli-commands-dev"
+      ],
+      "module_groups_count": 12,
+      "per_module_files": 108,
+      "key_findings": [
+        "SEC-43: the agent's own nsec reaches four sinks - McpServer.env (lib.rs:4159-4170) -> session/new (pool.rs:832) -> child stdin (acp.rs:568-571), then unredacted into observe(\"acp_write\") (acp.rs:963) and a debug log on target acp::wire (acp.rs:994). With --relay-observer the frame is NIP-44 encrypted to the owner and stored by the relay as kind 24200; the only transform is 3000-byte elision, which preserves a 63-char nsec.",
+        "SEC-44: `buzz --help` prints the live BUZZ_PRIVATE_KEY value to stdout with exit 0 (lib.rs:84-85); hide_env is never set. The ACP harness injects that key into agent subprocesses, so the nsec lands in model transcripts as ordinary success output.",
+        "SEC-46/47: buzz-dev-mcp is a self-documented unrestricted execution surface - paths.rs:3-6 'No containment enforcement', four tests assert the absence of a boundary, and shell(command:'env') returns the nsec because shell.rs:171 intentionally inherits it.",
+        "SEC-48: buzz-agent's PASSTHROUGH_ENV hands every MCP child NOSTR_PRIVATE_KEY, BUZZ_PRIVATE_KEY, BUZZ_AUTH_TAG, SSH_AUTH_SOCK, GIT_ASKPASS and GIT_SSH_COMMAND (mcp.rs:39-63) while the crate README lists a six-key allowlist and reassures the reader that provider API keys do not leak. env_clear() is correctly used; the gap is the list.",
+        "SEC-49: buzz-acp's re-implemented AUTH path regressed the challenge cap from 1-of-3 intake paths to 0-of-3 (relay.rs:3901, :3610-3616, :2344-2348 vs connection.rs:198-201), giving a hostile relay an unbounded sign-and-echo primitive against the agent key.",
+        "SEC-50: auto-approve is the shipped posture and undocumented - handle_permission_request returns allow_once for every request (acp.rs:1703-1718) with --permission-mode defaulting to bypass-permissions (config.rs:435).",
+        "SEC-54: `buzz patches send --patch-file <any path>` publishes arbitrary file contents as a kind-1617 event body; read_file_or_stdin (validate.rs:195) is unbounded and unconfined, and no CLI file argument uses buzz_persona::safe_resolve, which exists one crate over.",
+        "SEC-57: a delegated BUZZ_AUTH_TAG grants full owner authority on every command - the conditions slot (auth tag index 2) is never inspected anywhere in the CLI, so an agent cannot tell locally whether an action is within its delegation.",
+        "DEBT-58: ARCHITECTURE.md:658-667's buzz-acp LOC table is wrong on all seven rows; main.rs is listed at 2457 LOC doing 'event loop, pool orchestration' and is actually 3 lines, while lib.rs (6570 lines, where the loop lives) is omitted entirely.",
+        "DEBT-59: buzz-acp fully reimplements buzz-ws-client with no dependency on it, down to a byte-identical debug string; the two copies have now diverged in wire coverage (7 inbound message types vs 6, COUNT absent from the acp copy).",
+        "DEBT-60: buzz-acp's actual pooling logic has zero tests - 11 functions plus the 948-line run_prompt_task are untested, and tests/pool_lifecycle_state.rs is a 4-line #[path] shim that re-runs the same 9 in-source tests in a second binary.",
+        "DEBT-64: nine buzz-agent README claims are materially wrong, including a 16x error on BUZZ_AGENT_MAX_HISTORY_BYTES (documented 1 MiB, actual 16 MiB) and protocolVersion 1 vs 2.",
+        "DEBT-73/CFG-2d-13: AGENTS.md documents a `--kinds` flag on `messages search` that does not exist (verified exit 1), and its --format compact example cannot parse. --format itself is silently ignored by 16 of 21 command groups; moderation::dispatch binds it as _format.",
+        "DEBT-77/CONV-2d-14: six sites across the batch test a copy of the production rule rather than the rule - notably 3 of 4 BUZZ_ACP_ALLOWED_CHANNEL_ADD_POLICIES tests (admitted in the file's own comment) and the effort-table drift guard, whose most complex branch is dead.",
+        "CONV-2d-5: the 1000-line ceiling AGENTS.md documents has no Rust gate; 15 files in this batch exceed it, up to 6570 lines. AGENTS.md states it inside Mobile App section Rules while also saying 'mirroring desktop/web', so its intended scope is genuinely ambiguous.",
+        "Zero TODO/FIXME/HACK/XXX markers across buzz-acp, buzz-dev-mcp, buzz-agent's core/LLM/tools groups and all 21 buzz-cli command modules - deferred work is recorded in prose, so no grep-based audit surfaces it. This is why several stale claims in this batch went unnoticed.",
+        "Positive: buzz-cli's retry/idempotency layer is the best-engineered code in the batch (kind-aware DeliveryUnknown policy that declines to retry ambiguous moderation writes, 12 behavioural integration tests over live servers); view_image's credential gate is the best-hardened code (scheme+path+host+port match, redirects disabled when a token is attached, magic-byte sniffing, 64 Mpx bomb guard); buzz-cli correctly depends on the shared buzz-ws-client for NIP-42 rather than reimplementing it."
+      ]
+    },
+    {
+      "batch": "2e-ops-git-test",
+      "status": "in_progress",
+      "modules": [
+        {
+          "name": "buzz-admin",
+          "path": "crates/buzz-admin",
+          "files": 1,
+          "loc": 584,
+          "status": "pending"
+        },
+        {
+          "name": "buzz-push-gateway",
+          "path": "crates/buzz-push-gateway",
+          "files": 13,
+          "loc": 4092,
+          "status": "pending"
+        },
+        {
+          "name": "git-sign-nostr",
+          "path": "crates/git-sign-nostr",
+          "files": 2,
+          "loc": 2511,
+          "status": "pending"
+        },
+        {
+          "name": "git-credential-nostr",
+          "path": "crates/git-credential-nostr",
+          "files": 3,
+          "loc": 625,
+          "status": "pending"
+        },
+        {
+          "name": "buzz-pair-relay",
+          "path": "crates/buzz-pair-relay",
+          "files": 3,
+          "loc": 2445,
+          "status": "pending"
+        },
+        {
+          "name": "buzz-pairing-cli",
+          "path": "crates/buzz-pairing-cli",
+          "files": 1,
+          "loc": 623,
+          "status": "pending"
+        },
+        {
+          "name": "buzz-test-client",
+          "path": "crates/buzz-test-client",
+          "files": 20,
+          "loc": 14672,
+          "status": "pending"
+        },
+        {
+          "name": "sprig",
+          "path": "crates/sprig",
+          "files": 1,
+          "loc": 53,
+          "status": "pending"
+        },
+        {
+          "name": "countdown-bot",
+          "path": "examples/countdown-bot",
+          "status": "pending"
+        }
+      ],
+      "module_groups": [
+        {
+          "group": "push-gateway",
+          "crates": [
+            "buzz-push-gateway"
+          ],
+          "loc": 4092,
+          "files": [
+            "lib.rs",
+            "main.rs",
+            "config.rs",
+            "model.rs",
+            "postgres.rs",
+            "http.rs",
+            "authority.rs",
+            "apns.rs",
+            "app_attest.rs",
+            "grant.rs",
+            "token.rs",
+            "metrics.rs",
+            "strict_json.rs"
+          ]
+        },
+        {
+          "group": "git-identity",
+          "crates": [
+            "git-sign-nostr",
+            "git-credential-nostr"
+          ],
+          "loc": 3136,
+          "files": [
+            "git-sign-nostr/src/lib.rs",
+            "git-sign-nostr/src/main.rs",
+            "git-credential-nostr/src/lib.rs",
+            "git-credential-nostr/src/main.rs",
+            "git-credential-nostr/tests/integration.rs"
+          ]
+        },
+        {
+          "group": "pairing",
+          "crates": [
+            "buzz-pair-relay",
+            "buzz-pairing-cli"
+          ],
+          "loc": 3068,
+          "files": [
+            "buzz-pair-relay/src/lib.rs",
+            "buzz-pair-relay/src/main.rs",
+            "buzz-pair-relay/tests/integration.rs",
+            "buzz-pairing-cli/src/main.rs"
+          ]
+        },
+        {
+          "group": "ops-misc",
+          "crates": [
+            "buzz-admin",
+            "sprig",
+            "countdown-bot"
+          ],
+          "loc": 1074,
+          "files": [
+            "buzz-admin/src/main.rs",
+            "sprig/src/main.rs",
+            "examples/countdown-bot/src/main.rs"
+          ]
+        },
+        {
+          "group": "test-client-core",
+          "crates": [
+            "buzz-test-client"
+          ],
+          "loc": 3865,
+          "files": [
+            "src/lib.rs",
+            "src/main.rs",
+            "src/bin/wamp_bench.rs",
+            "src/bin/mention.rs",
+            "tests/e2e_relay.rs",
+            "tests/nip42_host_binding_live.rs",
+            "tests/e2e_user_status.rs",
+            "tests/e2e_team.rs"
+          ]
+        },
+        {
+          "group": "test-client-content",
+          "crates": [
+            "buzz-test-client"
+          ],
+          "loc": 3182,
+          "files": [
+            "tests/e2e_long_form.rs",
+            "tests/e2e_human_edit_agent_content.rs",
+            "tests/e2e_event_reminder.rs",
+            "tests/e2e_git.rs"
+          ]
+        },
+        {
+          "group": "test-client-media-agent",
+          "crates": [
+            "buzz-test-client"
+          ],
+          "loc": 3984,
+          "files": [
+            "tests/e2e_media.rs",
+            "tests/e2e_media_extended.rs",
+            "tests/e2e_media_video.rs",
+            "tests/e2e_managed_agent.rs",
+            "tests/e2e_mesh_llm.rs",
+            "tests/e2e_persona.rs"
+          ]
+        },
+        {
+          "group": "test-client-conformance",
+          "crates": [
+            "buzz-test-client"
+          ],
+          "loc": 4726,
+          "files": [
+            "tests/e2e_nostr_interop.rs",
+            "tests/conformance_multitenant.rs"
+          ]
+        }
+      ],
+      "module_groups_count": 8,
+      "per_module_files_expected": 72,
+      "note": "9 modules (buzz-admin, buzz-push-gateway, git-sign-nostr, git-credential-nostr, buzz-pair-relay, buzz-pairing-cli, buzz-test-client, sprig, countdown-bot) subdivided into 8 groups by combining small crates and splitting buzz-test-client (the largest at 15,757 LOC across src+tests) into 4 sub-groups by test-file theme: core+relay, content+git, media+agent-mesh, conformance+interop. 8 groups x 9 aspects = 72 per-module files."
+    },
+    {
+      "batch": "2f-desktop",
+      "status": "pending",
+      "note": "1249 frontend files + 219 tauri files - MUST subdivide: app/shared first, then features in groups, then src-tauri by subdirectory",
+      "modules": [
+        {
+          "name": "desktop-frontend-app-shared",
+          "path": "desktop/src/app + desktop/src/shared",
+          "status": "pending"
+        },
+        {
+          "name": "desktop-features-core",
+          "path": "desktop/src/features/{channels,chat,messages,forum,search}",
+          "status": "pending"
+        },
+        {
+          "name": "desktop-features-agents",
+          "path": "desktop/src/features/{agents,agent-memory,workflows,mesh-compute}",
+          "status": "pending"
+        },
+        {
+          "name": "desktop-features-community",
+          "path": "desktop/src/features/{communities,community-members,moderation,presence,profile,user-status,onboarding}",
+          "status": "pending"
+        },
+        {
+          "name": "desktop-features-misc",
+          "path": "desktop/src/features/{home,huddle,projects,pulse,reminders,notifications,settings,sidebar,custom-emoji,channel-templates,identity-archive,local-archive}",
+          "status": "pending"
+        },
+        {
+          "name": "desktop-tauri",
+          "path": "desktop/src-tauri/src",
+          "files": 219,
+          "loc": 97897,
+          "status": "pending",
+          "subdivide": true
+        }
+      ]
+    },
+    {
+      "batch": "2g-web-mobile",
+      "status": "pending",
+      "modules": [
+        {
+          "name": "web",
+          "path": "web/src",
+          "files": 51,
+          "loc": 4557,
+          "status": "pending"
+        },
+        {
+          "name": "mobile",
+          "path": "mobile/lib",
+          "files": 217,
+          "loc": 53343,
+          "status": "pending",
+          "subdivide": true
+        }
+      ]
+    }
+  ],
+  "phase3_complete": false,
+  "outputs_initialized": [
+    "overview.md",
+    "modules.md",
+    "infrastructure.md",
+    "configuration.md",
+    "data-model.md",
+    "api-surface.md",
+    "business-rules.md",
+    "features.md",
+    "integrations.md",
+    "conventions.md",
+    "security.md",
+    "debt.md"
+  ],
+  "outputs_pending": [
+    "README.md"
+  ],
+  "last_updated": "2026-07-24T00:00:00Z",
+  "modules_analyzed": 32,
+  "modules_total": 38,
+  "citations_total": 31710,
+  "merged_into_outputs": [
+    "data-model",
+    "api-surface",
+    "business-rules",
+    "features",
+    "integrations",
+    "conventions",
+    "security",
+    "configuration",
+    "debt"
+  ],
+  "analysis_baseline": {
+    "batches_2a_2b_2c_analyzed_at_commit": "b8510ede",
+    "synced_to_commit": "07d0265c",
+    "sync_delta": "23 commits, 129 files, +8959/-2364",
+    "reconciliation": "done",
+    "changed_files_in_analyzed_scope": [
+      "crates/buzz-core/src/kind.rs",
+      "crates/buzz-core/src/network.rs",
+      "crates/buzz-db/src/event.rs",
+      "crates/buzz-db/src/lib.rs",
+      "crates/buzz-db/src/relay_members.rs",
+      "crates/buzz-relay/src/api/bridge.rs",
+      "crates/buzz-relay/src/handlers/count.rs",
+      "crates/buzz-relay/src/handlers/event.rs",
+      "crates/buzz-relay/src/handlers/ingest.rs",
+      "crates/buzz-relay/src/handlers/req.rs",
+      "crates/buzz-workflow/src/executor.rs",
+      "crates/buzz-ws-client/src/message.rs",
+      "crates/buzz-acp/README.md",
+      "CONTRIBUTING.md"
+    ],
+    "note": "buzz-acp, buzz-agent, buzz-cli, buzz-dev-mcp sources were NOT touched by the sync, so batch 2d analysis is unaffected.",
+    "reconciliation_waves": {
+      "wave_1": {
+        "scope": "the 5 changed crates/buzz-relay/** files",
+        "files": [
+          "crates/buzz-relay/src/api/bridge.rs",
+          "crates/buzz-relay/src/handlers/req.rs",
+          "crates/buzz-relay/src/handlers/ingest.rs",
+          "crates/buzz-relay/src/handlers/event.rs",
+          "crates/buzz-relay/src/handlers/count.rs"
+        ],
+        "result": "anchors corrected in place across all 9 aspect docs; structure unchanged"
+      },
+      "wave_2": {
+        "scope": "the remaining 9 changed paths plus a content-verified sweep of incidental citations",
+        "method": "reconciled by finding, never by bulk line-shifting; a content-verification harness compared each citation's distinctive tokens against the old and current file and only proposed a move when the exact source line still existed verbatim",
+        "citations_machine_checked": 2325,
+        "citations_confirmed_at_anchor": 1604,
+        "citations_rewritten": 74,
+        "citations_unresolvable": 226,
+        "self_audit": "5 of the agent's own rewrites were caught and reverted to precise anchors - they had already been reconciled in wave 1 and the old line number coincidentally existed in a matched run",
+        "findings_confirmed_still_accurate": [
+          "DEBT-1",
+          "SEC-9",
+          "SEC-23",
+          "DEBT-24",
+          "DEBT-27",
+          "DEBT-4",
+          "DEBT-12",
+          "DEBT-53"
+        ],
+        "claim_rewrites": [
+          "buzz-db EventQuery: 18 filter fields -> 19 (persona_reader, event.rs:88)",
+          "buzz-ws-client: 'handles 6 inbound wire messages' -> 7 (COUNT added)",
+          "buzz-core kind.rs test/line counts and buzz-core crate test total 213 -> 229"
+        ],
+        "new_findings_added": [
+          "api-surface.md: three new public kind classifiers (kind.rs:192-241), all plain fn, breaking the const fn convention every other classifier in that module follows",
+          "debt.md: neither owner-cap test reads the effective limit, so setting BUZZ_MAX_COMMUNITIES_PER_OWNER makes both fail spuriously - the env knob has no end-to-end coverage"
+        ],
+        "pre_existing_issue_reported_not_fixed": "28 out-of-range citation anchors, all 1-2 lines past EOF, in files untouched by the sync - they look like an exclusive-end-bound convention from the original analysis"
+      },
+      "wave_3": {
+        "scope": "the 4 buzz-agent files changed by the second upstream pull (07d0265c..7fc0cc82): llm.rs (2894->3846, new mesh 'Auto' collective-routing subsystem from 16d4ec33 feat(desktop): use collective mesh routing for Auto #2825), catalog.rs (402->631, live Databricks discovery filtering/sorting from 8eb6e3eb fix(agents): run live Databricks discovery instead of the fallback list #2890), config.rs (2701->2709, one new field+env var), lib.rs (954->960, test-region only, discovery_failure_fallback contract change). Plus the 9 Batch 2d summary blocks across all nine aspect docs, and the additive-only house-doc drift in AGENTS.md/CONTRIBUTING.md/README.md.",
+        "confirmed_unaffected": [
+          "crates/buzz-acp/src/** (0 changed files)",
+          "crates/buzz-cli/** (0 changed files)",
+          "crates/buzz-dev-mcp/** (0 changed files)"
+        ],
+        "method": "same content-verification discipline as wave 2 - reconcile by finding, never by blanket line offset. Dispatched as 3 sub-agent passes over the module sections (agent-llm, then agent-tools+agent-core, then a single pass) plus one direct str_replace pass over the 9 Batch-2d summary blocks after 2 sub-agent dispatches for that pass hit a transient 'Access denied' service error.",
+        "corrections_that_recurred_across_multiple_sections": [
+          "Config field count 26 -> 27 (new field: prefer_mesh_for_auto, config.rs:734)",
+          "from_env env-var count 32 -> 36 (BUZZ_AGENT_PREFER_MESH_FOR_AUTO added, config.rs:807)",
+          "Config::from_env doc-comment ratio 6/26 -> 7/27 documented; undocumented 19/26 -> 20/27",
+          "Llm struct field count 3 -> 4 (new field: mesh_auto_state: Mutex<MeshAutoState>)",
+          "post()/post_openai() return type AgentError -> PostError (wrapper only, retry semantics unchanged)",
+          "unreachable!() in post's retry loop: llm.rs:1162 -> :1516",
+          "crates/buzz-agent/README.md anchors :130/:187 corrected to :128/:181 (these were already stale before this sync, from an earlier pass)"
+        ],
+        "new_findings_added": [
+          "SEC-61: unbounded response.json() on the new mesh-catalog probe (llm.rs:508), the only unbounded response read in the file",
+          "DM-2d-21: the new Llm/MeshAutoState/PostError types and the hysteresis state machine",
+          "API-172: the new mesh subsystem's public-surface impact (one new pub Config field, everything else private to llm.rs)",
+          "BR-179: mesh routing and live-discovery both classify by exact match, not substring - consistent with config.rs's discipline, not databricks_v2_route_for_model's",
+          "CFG-2d-6 rewritten: BUZZ_AGENT_PREFER_MESH_FOR_AUTO flagged as worse-in-kind than a plain undocumented var - it silently changes which model serves a turn, has no unit-testable pure parser, and is linked to its desktop counterpart by nothing"
+        ],
+        "post_hoc_regression_sweep": "after the 3 dispatched passes, ran a repo-wide grep across all 9 Batch-2d blocks for known-stale numeric forms (32 env vars, 26 fields, old llm.rs/config.rs line numbers) and found 5 additional stale mentions the dispatches missed - conventions.md CONV-2d-2 (unreachable!() anchor) and CONV-2d-6 (field/doc counts), data-model.md's positive-controls paragraph (make_tool_call/sum_usage anchors), and integrations.md INT-2d-17 (for_discovery anchor) - all fixed directly with str_replace and re-verified with a second identical sweep (zero matches).",
+        "final_verification": {
+          "modules_per_doc": 32,
+          "aspects_per_doc": 32,
+          "batch_2d_blocks_per_doc": 1,
+          "citations_total": 31710
+        }
+      }
+    },
+    "second_sync_detected": {
+      "detected": "at end of batch 2d, during final verification",
+      "worktree_now_at": "7fc0cc82",
+      "batch_2d_buzz_agent_analyzed_at": "07d0265c",
+      "reflog": "pull --tags origin main: Fast-forward at 2026-07-27 14:31:23 -0400, i.e. mid-session, after the buzz-agent groups were analyzed",
+      "delta": "26 commits, 282 files, +24506/-5861",
+      "fast_forward_only": true,
+      "affected_2d_groups": [
+        "agent-core",
+        "agent-llm",
+        "agent-tools"
+      ],
+      "unaffected_2d_groups": [
+        "acp-core",
+        "acp-relay",
+        "acp-pool",
+        "acp-queue",
+        "acp-protocol",
+        "buzz-dev-mcp",
+        "cli-core",
+        "cli-commands-messaging",
+        "cli-commands-dev"
+      ],
+      "unaffected_verified_by": "git diff --name-only 07d0265c..HEAD -- crates/buzz-acp/src crates/buzz-cli crates/buzz-dev-mcp returned 0 files",
+      "changed_source_files": {
+        "crates/buzz-agent/src/llm.rs": {
+          "lines": "2894 -> 3846",
+          "diff": "+1144/-192"
+        },
+        "crates/buzz-agent/src/catalog.rs": {
+          "lines": "402 -> 631",
+          "diff": "+291"
+        },
+        "crates/buzz-agent/src/config.rs": {
+          "lines": "2701 -> 2709",
+          "diff": "+8"
+        },
+        "crates/buzz-agent/src/lib.rs": {
+          "lines": "954 -> 960",
+          "diff": "+12"
+        }
+      },
+      "changed_docs": {
+        "crates/buzz-acp/README.md": "+59",
+        "AGENTS.md": "+11 (additive: DCO sign-off guidance after ~line 108; mobile worktree overrides after ~line 555). Substance of the 2d doc-drift findings is untouched - the messages-search --kinds gotcha, the --format positioning text, the exit-code table, the HTTP-surface list and the file-size ceiling all still read as analyzed - but line citations shift by about +2.",
+        "CONTRIBUTING.md": "+4 (additive: DCO sign-off, just fix-all note)",
+        "README.md": "+2"
+      },
+      "commits_bearing_directly_on_2d_findings": [
+        "95fdf978 feat(acp): bring your own harness (BYOH) - generic ACP runtime seam",
+        "8eb6e3eb fix(agents): run live Databricks discovery instead of the fallback list - bears directly on the catalog.rs findings (FEAT-2d-15 and the catalog debt rows)",
+        "5d8ede44 feat(agents): lower default agent parallelism from 24 to 10 - a default change",
+        "8c0e8cb1 fix(desktop): make agent definition authoritative for model/provider/prompt"
+      ],
+      "citation_exposure_upper_bounds": {
+        "llm.rs": 683,
+        "catalog.rs": 108,
+        "config.rs (all crates, buzz-agent subset needs disambiguating)": 1838,
+        "lib.rs (all crates, buzz-agent subset needs disambiguating)": 2514,
+        "AGENTS.md": 57,
+        "buzz-agent README": 103,
+        "buzz-acp/README.md": 10,
+        "CONTRIBUTING.md": 1
+      },
+      "status": "reconciled",
+      "options_presented": [
+        "wave-3 reconciliation now, before batch 2e",
+        "defer reconciliation to a single pass in Phase 3"
+      ],
+      "reconciled_at_commit": "7fc0cc82"
+    }
+  },
+  "structural_normalization": {
+    "when": "post-2d-merge",
+    "issue_1": "three batch-2b module sections (buzz-db, buzz-auth, buzz-search) wrote their aspect heading as '### <Name>' instead of '### Aspect: <Name>', in all 9 docs; buzz-auth in features.md additionally used '### Features / Capabilities'",
+    "issue_2": "debt.md mixed '### Aspect: Technical Debt' (16) and '### Aspect: Debt' (13)",
+    "result": "all 9 docs now have 32 '## Module:' sections, 32 '### Aspect:' lines, and exactly one distinct aspect label each"
+  },
+  "merge_verification": {
+    "per_module_files_total": 288,
+    "batch_2d_files": 108,
+    "format_invariant": "all 108 batch-2d files verified: exactly one '^## ' and one '^### ' line, module line byte-identical within each group",
+    "modules_per_aspect_doc": {
+      "before_2d": 20,
+      "after_2d": 32
+    },
+    "citations": {
+      "before_2d": 18389,
+      "after_2d": 30834
+    },
+    "backups": [
+      "_work/backup-pre-2c (9 docs)",
+      "_work/backup-pre-2d (9 docs)"
+    ]
+  },
+  "tracking_policy": {
+    "decision": "track upstream live, no worktree pinning",
+    "rationale": "user explicitly chose this over pinning to a fixed SHA: 'We should keep tracking upstream and sync as needed. This project is evolving daily'",
+    "procedure": "before starting each new phase-2 batch: git fetch origin main, compare HEAD to origin/main, fast-forward if behind (fail closed - never rebase/force), diff the newly-synced range against files already covered by prior batches, and run a reconciliation wave (by finding, never by blanket line offset) before merging the new batch's output. This has now happened 3 times (waves 1-3, see analysis_baseline.reconciliation_waves) and should be expected to recur.",
+    "verified_at_batch_2e_start": {
+      "HEAD": "7fc0cc82",
+      "origin/main": "7fc0cc82",
+      "ahead": 0,
+      "behind": 0
+    }
+  }
+}
