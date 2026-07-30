@@ -866,6 +866,16 @@
       "origin/main": "7fc0cc82",
       "ahead": 0,
       "behind": 0
+    },
+    "verified_at_batch_2e_resume": {
+      "HEAD": "7ae81f12",
+      "origin/main": "7ae81f12",
+      "ahead": 0,
+      "behind": 0,
+      "delta_since_7fc0cc82": "1 commit, 373 files, all under .aidlc/reverse-engineer/ (author mlwood-dev, message 'reverse-engineer')",
+      "source_files_touched": 0,
+      "note": "this commit is our own in-progress analysis output being checked into main by a teammate, not an upstream source change. Confirmed: 0 files under crates/, desktop/, mobile/, web/ touched; committed progress.json is byte-identical to local working copy; test-client-core absent from the commit (consistent with it never having been dispatched). No reconciliation required.",
+      "reconciliation_required": false
     }
   }
 }
